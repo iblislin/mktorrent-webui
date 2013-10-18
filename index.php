@@ -23,12 +23,22 @@ The author of this software can be contacted at rustybadger at users.sourceforge
 $root = "/home/torrent"; // Set this to the directory you want to expose (e.g. /home/rtorrent)
 $mktorrent = "/usr/local/bin/mktorrent"; // This should be (for security reasons) the full path to mktorrent. (It can be found by running `which mktorrent` if you're unsure.)
 
-function normalise($path) { // This normalises a path to its simplest form, and also prevents jailbreaking.
+function normalise($path)
+{ // This normalises a path to its simplest form, and also prevents jailbreaking.
 	$normalised = array();
-	foreach (explode("/", $path) as $p) {
-		if ($p == "..") {array_pop($normalised);}
-		else if ($p == ".") {}
-		else if ($p) {array_push($normalised, $p);}
+	foreach (explode("/", $path) as $p)
+	{
+		if ($p == "..")
+		{
+			array_pop($normalised);
+		}
+		else if ($p == ".")
+		{
+		}
+		else if ($p)
+		{
+			array_push($normalised, $p);
+		}
 	}
 	array_unshift($normalised, ""); // This means the path always starts with /
 	return implode("/", $normalised);
@@ -37,26 +47,119 @@ function normalise($path) { // This normalises a path to its simplest form, and 
 $_POST['input'] = normalise($_POST['input']);
 $_POST['output'] = normalise($_POST['output']);
 
-if ($_POST['inputnav'] != "" && isset($_POST['input']) && is_dir($root . $_POST['input'])) {$_POST['inputpath'] = $_POST['input'];}
-if ($_POST['outputnav'] != "" && isset($_POST['output']) && is_dir($root . $_POST['output'])) {$_POST['outputpath'] = $_POST['output'];}
+if ($_POST['inputnav'] != "" && isset($_POST['input']) && is_dir($root . $_POST['input']))
+{
+	$_POST['inputpath'] = $_POST['input'];
+}
+if ($_POST['outputnav'] != "" && isset($_POST['output']) && is_dir($root . $_POST['output']))
+{
+	$_POST['outputpath'] = $_POST['output'];
+}
 
 $command = $mktorrent . " ";
-if (is_array($_POST['announce'])) {foreach ($_POST['announce'] as $a) {if ($a != "") {$command .= "-a " . escapeshellarg($a) . " ";}}} else {$_POST['announce'] = array();}
-if ($_POST['public'] != "") {if ($_POST['public'] == "false") {$command .= "-p ";}} else {$_POST['public'] = "true";}
-if ($_POST['piecelength'] != "") {$command .= "-l " . escapeshellarg($_POST['piecelength']) . " ";}
-if (is_array($_POST['webseeds'])) {foreach ($_POST['webseeds'] as $w) {if ($w != "") {$command .= "-w " . escapeshellarg($w) . " ";}}} else {$_POST['webseeds'] = array();}
-if ($_POST['name'] != "") {$command .= "-n " . escapeshellarg($_POST['name']) . " ";}
-if ($_POST['comment'] != "") {$command .= "-c " . escapeshellarg($_POST['comment']) . " ";}
-if ($_POST['creation'] != "") {if ($_POST['creation'] == "false") {$command .= "-d ";}} else {$_POST['creation'] = "true";}
-if ($_POST['verbose'] != "") {if ($_POST['verbose'] == "false") {$command .= "-v ";}} else {$_POST['verbose'] = "true";}
-if ($_POST['outputfile'] != "") {$command .= "-o " . escapeshellarg($root . $_POST['outputpath'] . "/" . $_POST['outputfile']) . " ";} else {$_POST['outputfile'] = ".torrent";}
-if ($_POST['input'] != "") {$command .= escapeshellarg($root . $_POST['input']);}
+if (is_array($_POST['announce']))
+{
+	foreach ($_POST['announce'] as $a)
+	{
+		if ($a != "")
+		{
+			$command .= "-a " . escapeshellarg($a) . " ";
+		}
+	}
+}
+else
+{
+	$_POST['announce'] = array();
+}
+if ($_POST['public'] != "")
+{
+	if ($_POST['public'] == "false")
+	{
+		$command .= "-p ";
+	}
+}
+else
+{
+	$_POST['public'] = "true";
+}
+if ($_POST['piecelength'] != "")
+{
+	$command .= "-l " . escapeshellarg($_POST['piecelength']) . " ";
+}
+if (is_array($_POST['webseeds']))
+{
+	foreach ($_POST['webseeds'] as $w)
+	{
+		if ($w != "")
+		{
+			$command .= "-w " . escapeshellarg($w) . " ";
+		}
+	}
+}
+else
+{
+	$_POST['webseeds'] = array();
+}
+if ($_POST['name'] != "")
+{
+	$command .= "-n " . escapeshellarg($_POST['name']) . " ";
+}
+if ($_POST['comment'] != "")
+{
+	$command .= "-c " . escapeshellarg($_POST['comment']) . " ";
+}
+if ($_POST['creation'] != "")
+{
+	if ($_POST['creation'] == "false")
+	{
+		$command .= "-d ";
+	}
+}
+else
+{
+	$_POST['creation'] = "true";
+}
+if ($_POST['verbose'] != "")
+{
+	if ($_POST['verbose'] == "false")
+	{
+		$command .= "-v ";
+	}
+}
+else
+{
+	$_POST['verbose'] = "true";
+}
+if ($_POST['outputfile'] != "")
+{
+	$command .= "-o " . escapeshellarg($root . $_POST['outputpath'] . "/" . $_POST['outputfile']) . " ";
+}
+else
+{
+	$_POST['outputfile'] = ".torrent";
+}
+if ($_POST['input'] != "")
+{
+	$command .= escapeshellarg($root . $_POST['input']);
+}
 
-if ($_POST['report'] == "") {$_POST['report'] = "false";}
-if ($_POST['advanced'] == "") {$_POST['advanced'] = "false";}
+if ($_POST['report'] == "")
+{
+	$_POST['report'] = "false";
+}
+if ($_POST['advanced'] == "")
+{
+	$_POST['advanced'] = "false";
+}
 
-if ($_POST['inputnav'] == "" && $_POST['outputnav'] == "") {exec($command, $returnstr, $return);}
-else {$command = ""; $returnstr = array(); $return = -1;}
+if ($_POST['inputnav'] == "" && $_POST['outputnav'] == "")
+{
+	exec($command, $returnstr, $return);
+}
+else
+{
+	$command = ""; $returnstr = array(); $return = -1;
+}
 ?>
 <!DOCTYPE HTML>
 <html lang="en">
