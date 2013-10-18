@@ -20,7 +20,7 @@ The author of this software can be contacted at rustybadger at users.sourceforge
 */
 
 // Config
-$root = "/home/rtorrent"; // Set this to the directory you want to expose (e.g. /home/rtorrent)
+$root = "/home/torrent"; // Set this to the directory you want to expose (e.g. /home/rtorrent)
 $mktorrent = "/usr/local/bin/mktorrent"; // This should be (for security reasons) the full path to mktorrent. (It can be found by running `which mktorrent` if you're unsure.)
 
 function normalise($path) { // This normalises a path to its simplest form, and also prevents jailbreaking.
@@ -58,10 +58,10 @@ if ($_POST['advanced'] == "") {$_POST['advanced'] = "false";}
 if ($_POST['inputnav'] == "" && $_POST['outputnav'] == "") {exec($command, $returnstr, $return);}
 else {$command = ""; $returnstr = array(); $return = -1;}
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE HTML>
+<html lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta charset="UTF-8">
 <title>MkTorrent WebUI</title>
 <script type="text/javascript">
 function showhide(id, input) {
