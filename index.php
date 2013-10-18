@@ -254,7 +254,38 @@ else
 		</table>
 		<h2><a href="javascript: showhide('advancedid', 'advanced');">Advanced Options</a><input type="hidden" name="advanced" id="advanced" value="<?php echo $_POST['advanced']; ?>" /></h2>
 		<table id="advancedid"<?php echo ($_POST['advanced'] == "true" ? "" : " style=\"display: none;\""); ?>>
-			<tr><td onclick="label('piecelength');">Piece Length (in 2^n bytes):</td><td><input type="text" name="piecelength" id="piecelength" value="<?php echo htmlspecialchars($_POST['piecelength']); ?>" /></td></tr>
+			<tr><td onclick="label('piecelength');">Piece Length :</td><td>
+					<select id="piecelength" name="piecelength">
+					<?php
+						$select_lenght = array(
+						"15" => "32 KB",
+						"16" => "64 KB",
+						"17" => "128 KB",
+						"18" => "256 KB",
+						"19" => "512 KB",
+						"20" => "1 MB",
+						"21" => "2 MB",
+						"22" => "4 MB",
+						"23" => "8 MB",
+						"24" => "16 MB",
+						"25" => "32 MB",
+						"26" => "64 MB",
+						"27" => "128 MB",
+						"28" => "256 MB"
+						);
+						foreach( $select_lenght as $key => $val )
+						{
+							echo '<option value="'.$key.'"';
+							if ( $key == $_POST['piecelength'] )
+							{
+								echo 'selected="selected"';
+							}
+							echo '>'.$val."</option>\n";
+						}
+						
+					?>
+					</select>
+			</td></tr>
 			<tr><td onclick="label('webseeds');">Web Seeds URLs:</td><td>
 			<table id="webseedstable">
 		<?php

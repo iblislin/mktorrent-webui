@@ -1,3 +1,9 @@
-h2 {text-decoration: underline;}
-table, select, input {width: 100%;}
-input[type=radio] {width: auto;}
+h2 {
+	text-decoration: underline;
+}
+table, select, input {
+	width: 100%;
+}
+input[type=radio] {
+	width: auto;
+}
