@@ -1,0 +1,9 @@
+Notes:
+The fifth beta release of MkTorrent WebUI.
+This is an extensive rewrite from the svn version of mktorrent to the SourceForge version (I don't understand why they were so different.)
+Supports all of the options MkTorrent supports.
+Fairly untested.
+
+Installation:
+Just extract index.php, name it whatever.
+The folder torrents are saved to needs to be writable by the webserver user, for a default apache install that is www-data.
