@@ -195,11 +195,7 @@ else
 		table.deleteRow(index);
 	}
 	</script>
-	<style type="text/css">
-		h2 {text-decoration: underline;}
-		table, select, input {width: 100%;}
-		input[type=radio] {width: auto;}
-	</style>
+	<link rel="stylesheet" href="./style.css" />
 </head>
 <body>
 	<form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
