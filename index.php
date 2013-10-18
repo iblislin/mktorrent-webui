@@ -165,113 +165,117 @@ else
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-<title>MkTorrent WebUI</title>
-<script type="text/javascript">
-function showhide(id, input) {
-	if (document.getElementById(id).style.display == "none") {
-		document.getElementById(id).style.display = "";
-		document.getElementById(input).value = "true";
-	} else {
-		document.getElementById(id).style.display = "none";
-		document.getElementById(input).value = "false";
+	<title>MkTorrent WebUI</title>
+	<script type="text/javascript">
+	function showhide(id, input) {
+		if (document.getElementById(id).style.display == "none") {
+			document.getElementById(id).style.display = "";
+			document.getElementById(input).value = "true";
+		} else {
+			document.getElementById(id).style.display = "none";
+			document.getElementById(input).value = "false";
+		}
 	}
-}
-function label(id, check) {document.getElementById(id).focus(); if (check) {document.getElementById(id).checked = true;}}<?php // This is because a label outside of a td doesn't work, and inside only the text is clickable. ?>
-function insertRow(table, name) {
-	var row = table.insertRow(table.rows.length - 1);
-	var cell = document.createElement("td"); row.appendChild(cell);
-	var input = document.createElement("input");
-		input.type = "text";
-		input.name = name;
-		input.onblur =  function() {if (this.value == "") {deleteRow(table, row.rowIndex);}};
-	cell.appendChild(input);
-		input.focus();
-}
-function deleteRow(table, index) {
-	table.deleteRow(index);
-}
-</script>
-<style type="text/css">
-h2 {text-decoration: underline;}
-table, select, input {width: 100%;}
-input[type=radio] {width: auto;}
-</style>
+	function label(id, check) {
+		document.getElementById(id).focus(); if (check) {document.getElementById(id).checked = true;
+		}
+	}
+	<?php // This is because a label outside of a td doesn't work, and inside only the text is clickable. ?>
+	function insertRow(table, name) {
+		var row = table.insertRow(table.rows.length - 1);
+		var cell = document.createElement("td"); row.appendChild(cell);
+		var input = document.createElement("input");
+			input.type = "text";
+			input.name = name;
+			input.onblur =  function() {if (this.value == "") {deleteRow(table, row.rowIndex);}};
+		cell.appendChild(input);
+			input.focus();
+	}
+	function deleteRow(table, index) {
+		table.deleteRow(index);
+	}
+	</script>
+	<style type="text/css">
+		h2 {text-decoration: underline;}
+		table, select, input {width: 100%;}
+		input[type=radio] {width: auto;}
+	</style>
 </head>
 <body>
-<form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
-<h2><a href="javascript: showhide('reportid', 'report');">Report</a><input type="hidden" name="report" id="report" value="<?php echo $_POST['report']; ?>" /></h2>
-<p><?php switch ($return) {case -1: echo ""; break; case 0: echo "MkTorrent Ran Sucessfully."; break; default: echo "MkTorrent Reported An Error."; break;} ?></p>
-<pre id="reportid"<?php echo ($_POST['report'] == "true" ? "" : " style=\"display: none;\""); ?>>
-<?php
-if ($command != "") {echo "# " . htmlspecialchars(str_replace(array($root, $mktorrent), array("", "mktorrent "), $command)) . "\n";}
-echo htmlspecialchars(str_replace($root, "", implode("\n", $returnstr)));
-?>
-</pre>
-<h2>Options</h2>
-<table>
-<tr><td onclick="label('announce');">Tracker Groups:</td><td>
-<table id="announcetable">
-<?php
-foreach ($_POST['announce'] as $i) {if ($i != "") {echo "<tr><td><input type=\"text\" name=\"announce[]\" value=\"" . htmlspecialchars($i) . "\" onblur=\"if (this.value == '') {deleteRow(document.getElementById('announcetable'), this.parentNode.parentNode.rowIndex);}\" /></td></tr>\n";}}
-?>
-<tr><td><input type="text" name="announce[]" id="announce" onfocus="insertRow(document.getElementById('announcetable'), 'announce[]');" /></td></tr>
-</table>
-</td></tr>
-<tr><td rowspan="2">Public Torrent:</td><td onclick="label('publictrue', true);"><input type="radio" name="public" id="publictrue" value="true"<?php echo ($_POST['public'] == "true" ? " checked=\"checked\"" : ""); ?> /> Public</td></tr>
-<tr><td onclick="label('publicfalse', true);"><input type="radio" name="public" id="publicfalse" value="false"<?php echo ($_POST['public'] == "false" ? " checked=\"checked\"" : ""); ?> /> Private</td></tr>
-</table>
-<table>
-<tr><td style="width: 50%;" onclick="label('input');">Input File/Directory:</td><td colspan="2" style="width: 50%;" onclick="label('outputfile');">Output Torrent:</td></tr>
-<tr><td rowspan="2">
-<input type="hidden" name="inputpath" value="<?php echo htmlspecialchars($_POST['inputpath']); ?>" />
-<input type="hidden" name="inputnav" />
-<select name="input" id="input" size="16" ondblclick="this.form.inputnav.value = 'true'; this.form.submit();" onkeypress="if (event.keyCode == 13) {this.form.inputnav.value = 'true'; this.form.submit();};">
-<?php
-if ($dir = dir($root . $_POST['inputpath'])) {
-	$nodes = array();
-	while ($node = $dir->read()) {array_push($nodes, $node);} $dir->close();
-	natcasesort($nodes);
-	foreach ($nodes as $node) {echo "<option value=\"" . htmlspecialchars($_POST['inputpath'] . "/" . $node) . "\"" . ($_POST['input'] == $_POST['inputpath'] . "/" . $node ? " selected=\"selected\"" : "") . ">" . htmlspecialchars($node) . "</option>\n";}
-} else {echo "<option value=\"" . htmlspecialchars($_POST['inputpath'] . "/.") . "\">.</option>\n<option value=\"" . htmlspecialchars($_POST['inputpath'] . "/..") . "\">..</option>\n<option value=\"" . htmlspecialchars($_POST['inputpath'] . "/") . "\">Failed to Open Directory</option>\n";}
-?>
-</select>
-</td><td><input type="text" name="outputfile" id="outputfile" value="<?php echo htmlspecialchars($_POST['outputfile']); ?>" /></td><td>in</td></tr>
-<tr><td colspan="2">
-<input type="hidden" name="outputpath" value="<?php echo htmlspecialchars($_POST['outputpath']); ?>" />
-<input type="hidden" name="outputnav" />
-<select name="output" size="14" ondblclick="this.form.outputnav.value = 'true'; this.form.submit();" onkeypress="if (event.keyCode == 13) {this.form.outputnav.value = 'true'; this.form.submit();};" onblur="this.options[this.selectedIndex].selected = false;">
-<?php
-if ($dir = dir($root . $_POST['outputpath'])) {
-	$nodes = array();
-	while ($node = $dir->read()) {array_push($nodes, $node);}
-	$dir->close();
-	natcasesort($nodes);
-	foreach ($nodes as $node) {echo "<option value=\"" . htmlspecialchars($_POST['outputpath'] . "/" . $node) . "\">" . htmlspecialchars($node) . "</option>\n";}
-} else {echo "<option value=\"" . htmlspecialchars($_POST['outputpath'] . "/.") . "\">.</option>\n<option value=\"" . htmlspecialchars($_POST['outputpath'] . "/..") . "\">..</option>\n<option value=\"" . htmlspecialchars($_POST['outputpath'] . "/") . "\">Failed to Open Directory</option>\n";}
-?>
-</select>
-</td></tr>
-</table>
-<h2><a href="javascript: showhide('advancedid', 'advanced');">Advanced Options</a><input type="hidden" name="advanced" id="advanced" value="<?php echo $_POST['advanced']; ?>" /></h2>
-<table id="advancedid"<?php echo ($_POST['advanced'] == "true" ? "" : " style=\"display: none;\""); ?>>
-<tr><td onclick="label('piecelength');">Piece Length (in 2^n bytes):</td><td><input type="text" name="piecelength" id="piecelength" value="<?php echo htmlspecialchars($_POST['piecelength']); ?>" /></td></tr>
-<tr><td onclick="label('webseeds');">Web Seeds URLs:</td><td>
-<table id="webseedstable">
-<?php
-foreach ($_POST['webseeds'] as $i) {if ($i != "") {echo "<tr><td><input type=\"text\" name=\"webseeds[]\" value=\"" . htmlspecialchars($i) . "\" onblur=\"if (this.value == '') {deleteRow(document.getElementById('webseedstable'), this.parentNode.parentNode.rowIndex);}\" /></td></tr>\n";}}
-?>
-<tr><td><input type="text" name="webseeds[]" id="webseeds" onfocus="insertRow(document.getElementById('webseedstable'), 'webseeds[]');" /></td></tr>
-</table>
-</td></tr>
-<tr><td onclick="label('name');">Torrent Name:</td><td><input type="text" name="name" id="name" value="<?php echo htmlspecialchars($_POST['name']); ?>" /></td></tr>
-<tr><td onclick="label('comment');">Comment:</td><td><input type="text" name="comment" id="comment" value="<?php echo htmlspecialchars($_POST['comment']); ?>" /></td></tr>
-<tr><td rowspan="2">Write Creation Date:</td><td onclick="label('creationtrue', true);"><input type="radio" name="creation" id="creationtrue" value="true"<?php echo ($_POST['creation'] == "true" ? " checked=\"checked\"" : ""); ?> /> Yes</td></tr>
-<tr><td onclick="label('creationfalse', true);"><input type="radio" name="creation" id="creationfalse" value="false"<?php echo ($_POST['creation'] == "false" ? " checked=\"checked\"" : ""); ?> /> No</td></tr>
-<tr><td rowspan="2">Be Verbose:</td><td onclick="label('verbosetrue', true);"><input type="radio" name="verbose" id="verbosetrue" value="true"<?php echo ($_POST['verbose'] == "true" ? " checked=\"checked\"" : ""); ?> /> Yes</td></tr>
-<tr><td onclick="label('verbosefalse', true);"><input type="radio" name="verbose" id="verbosefalse" value="false"<?php echo ($_POST['verbose'] == "false" ? " checked=\"checked\"" : ""); ?> /> No</td></tr>
-</table>
-<div><button type="submit">MkTorrent!</button></div>
-</form>
-<p><a href="http://sourceforge.net/projects/mktorrentwebui" rel="external" onclick="window.open(this.href); return false;"><img src="http://sflogo.sourceforge.net/sflogo.php?group_id=260083&amp;type=10" width="80" height="15" alt="Check out our SourceForge project page" /></a></p>
+	<form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
+		<h2><a href="javascript: showhide('reportid', 'report');">Report</a><input type="hidden" name="report" id="report" value="<?php echo $_POST['report']; ?>" /></h2>
+		<p><?php switch ($return) {case -1: echo ""; break; case 0: echo "MkTorrent Ran Sucessfully."; break; default: echo "MkTorrent Reported An Error."; break;} ?></p>
+		<pre id="reportid"<?php echo ($_POST['report'] == "true" ? "" : " style=\"display: none;\""); ?>>
+		<?php
+		if ($command != "") {echo "# " . htmlspecialchars(str_replace(array($root, $mktorrent), array("", "mktorrent "), $command)) . "\n";}
+		echo htmlspecialchars(str_replace($root, "", implode("\n", $returnstr)));
+		?>
+		</pre>
+		<h2>Options</h2>
+		<table>
+			<tr><td onclick="label('announce');">Tracker Groups:</td><td>
+				<table id="announcetable">
+		<?php
+		foreach ($_POST['announce'] as $i) {if ($i != "") {echo "<tr><td><input type=\"text\" name=\"announce[]\" value=\"" . htmlspecialchars($i) . "\" onblur=\"if (this.value == '') {deleteRow(document.getElementById('announcetable'), this.parentNode.parentNode.rowIndex);}\" /></td></tr>\n";}}
+		?>
+					<tr><td><input type="text" name="announce[]" id="announce" onfocus="insertRow(document.getElementById('announcetable'), 'announce[]');" /></td></tr>
+				</table>
+			</td></tr>
+			<tr><td rowspan="2">Public Torrent:</td><td onclick="label('publictrue', true);"><input type="radio" name="public" id="publictrue" value="true"<?php echo ($_POST['public'] == "true" ? " checked=\"checked\"" : ""); ?> /> Public</td></tr>
+			<tr><td onclick="label('publicfalse', true);"><input type="radio" name="public" id="publicfalse" value="false"<?php echo ($_POST['public'] == "false" ? " checked=\"checked\"" : ""); ?> /> Private</td></tr>
+		</table>
+		<table>
+			<tr><td style="width: 50%;" onclick="label('input');">Input File/Directory:</td><td colspan="2" style="width: 50%;" onclick="label('outputfile');">Output Torrent:</td></tr>
+			<tr><td rowspan="2">
+			<input type="hidden" name="inputpath" value="<?php echo htmlspecialchars($_POST['inputpath']); ?>" />
+			<input type="hidden" name="inputnav" />
+			<select name="input" id="input" size="16" ondblclick="this.form.inputnav.value = 'true'; this.form.submit();" onkeypress="if (event.keyCode == 13) {this.form.inputnav.value = 'true'; this.form.submit();};">
+		<?php
+		if ($dir = dir($root . $_POST['inputpath'])) {
+			$nodes = array();
+			while ($node = $dir->read()) {array_push($nodes, $node);} $dir->close();
+			natcasesort($nodes);
+			foreach ($nodes as $node) {echo "<option value=\"" . htmlspecialchars($_POST['inputpath'] . "/" . $node) . "\"" . ($_POST['input'] == $_POST['inputpath'] . "/" . $node ? " selected=\"selected\"" : "") . ">" . htmlspecialchars($node) . "</option>\n";}
+		} else {echo "<option value=\"" . htmlspecialchars($_POST['inputpath'] . "/.") . "\">.</option>\n<option value=\"" . htmlspecialchars($_POST['inputpath'] . "/..") . "\">..</option>\n<option value=\"" . htmlspecialchars($_POST['inputpath'] . "/") . "\">Failed to Open Directory</option>\n";}
+		?>
+			</select>
+			</td><td><input type="text" name="outputfile" id="outputfile" value="<?php echo htmlspecialchars($_POST['outputfile']); ?>" /></td><td>in</td></tr>
+			<tr><td colspan="2">
+			<input type="hidden" name="outputpath" value="<?php echo htmlspecialchars($_POST['outputpath']); ?>" />
+			<input type="hidden" name="outputnav" />
+			<select name="output" size="14" ondblclick="this.form.outputnav.value = 'true'; this.form.submit();" onkeypress="if (event.keyCode == 13) {this.form.outputnav.value = 'true'; this.form.submit();};" onblur="this.options[this.selectedIndex].selected = false;">
+		<?php
+		if ($dir = dir($root . $_POST['outputpath'])) {
+			$nodes = array();
+			while ($node = $dir->read()) {array_push($nodes, $node);}
+			$dir->close();
+			natcasesort($nodes);
+			foreach ($nodes as $node) {echo "<option value=\"" . htmlspecialchars($_POST['outputpath'] . "/" . $node) . "\">" . htmlspecialchars($node) . "</option>\n";}
+		} else {echo "<option value=\"" . htmlspecialchars($_POST['outputpath'] . "/.") . "\">.</option>\n<option value=\"" . htmlspecialchars($_POST['outputpath'] . "/..") . "\">..</option>\n<option value=\"" . htmlspecialchars($_POST['outputpath'] . "/") . "\">Failed to Open Directory</option>\n";}
+		?>
+			</select>
+			</td></tr>
+		</table>
+		<h2><a href="javascript: showhide('advancedid', 'advanced');">Advanced Options</a><input type="hidden" name="advanced" id="advanced" value="<?php echo $_POST['advanced']; ?>" /></h2>
+		<table id="advancedid"<?php echo ($_POST['advanced'] == "true" ? "" : " style=\"display: none;\""); ?>>
+			<tr><td onclick="label('piecelength');">Piece Length (in 2^n bytes):</td><td><input type="text" name="piecelength" id="piecelength" value="<?php echo htmlspecialchars($_POST['piecelength']); ?>" /></td></tr>
+			<tr><td onclick="label('webseeds');">Web Seeds URLs:</td><td>
+			<table id="webseedstable">
+		<?php
+		foreach ($_POST['webseeds'] as $i) {if ($i != "") {echo "<tr><td><input type=\"text\" name=\"webseeds[]\" value=\"" . htmlspecialchars($i) . "\" onblur=\"if (this.value == '') {deleteRow(document.getElementById('webseedstable'), this.parentNode.parentNode.rowIndex);}\" /></td></tr>\n";}}
+		?>
+				<tr><td><input type="text" name="webseeds[]" id="webseeds" onfocus="insertRow(document.getElementById('webseedstable'), 'webseeds[]');" /></td></tr>
+			</table>
+			</td></tr>
+			<tr><td onclick="label('name');">Torrent Name:</td><td><input type="text" name="name" id="name" value="<?php echo htmlspecialchars($_POST['name']); ?>" /></td></tr>
+			<tr><td onclick="label('comment');">Comment:</td><td><input type="text" name="comment" id="comment" value="<?php echo htmlspecialchars($_POST['comment']); ?>" /></td></tr>
+			<tr><td rowspan="2">Write Creation Date:</td><td onclick="label('creationtrue', true);"><input type="radio" name="creation" id="creationtrue" value="true"<?php echo ($_POST['creation'] == "true" ? " checked=\"checked\"" : ""); ?> /> Yes</td></tr>
+			<tr><td onclick="label('creationfalse', true);"><input type="radio" name="creation" id="creationfalse" value="false"<?php echo ($_POST['creation'] == "false" ? " checked=\"checked\"" : ""); ?> /> No</td></tr>
+			<tr><td rowspan="2">Be Verbose:</td><td onclick="label('verbosetrue', true);"><input type="radio" name="verbose" id="verbosetrue" value="true"<?php echo ($_POST['verbose'] == "true" ? " checked=\"checked\"" : ""); ?> /> Yes</td></tr>
+			<tr><td onclick="label('verbosefalse', true);"><input type="radio" name="verbose" id="verbosefalse" value="false"<?php echo ($_POST['verbose'] == "false" ? " checked=\"checked\"" : ""); ?> /> No</td></tr>
+		</table>
+		<div><button type="submit">MkTorrent!</button></div>
+	</form>
+	<p><a href="http://sourceforge.net/projects/mktorrentwebui" rel="external" onclick="window.open(this.href); return false;"><img src="http://sflogo.sourceforge.net/sflogo.php?group_id=260083&amp;type=10" width="80" height="15" alt="Check out our SourceForge project page" /></a></p>
 </body>
 </html>
